@@ -185,8 +185,22 @@
 <!--  Suppress internals  -->
 <xsl:template match="tei:encodingDesc|tei:revisionDesc"/>
 <!--  Root TEI to HTML  -->
+<!--  Language to render: 'en' or 'bg'  -->
+<xsl:param name="lang" select="'en'"/>
+<xsl:template match="@*|node()" mode="filter">
+<xsl:copy>
+<xsl:apply-templates select="@*|node()" mode="filter"/>
+</xsl:copy>
+</xsl:template>
+<xsl:template match="*[@xml:lang=('en','bg')][@xml:lang!=$lang]" mode="filter"/>
 <xsl:template match="/tei:TEI">
-<html lang="en">
+<xsl:variable name="filtered">
+<xsl:apply-templates select="." mode="filter"/>
+</xsl:variable>
+<xsl:apply-templates select="$filtered/tei:TEI" mode="page"/>
+</xsl:template>
+<xsl:template match="tei:TEI" mode="page">
+<html lang="{$lang}">
 <head>
 <meta charset="UTF-8"/>
 <title>
